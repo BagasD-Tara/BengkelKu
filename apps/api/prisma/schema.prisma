@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  OWNER
+  KASIR
+}
+
+enum TransactionStatus {
+  SELESAI
+  DIBATALKAN
+}
+
+enum PaymentMethod {
+  TUNAI
+  TRANSFER
+  QRIS
+}
+
+enum MovementType {
+  MASUK
+  JUAL
+  BATAL
+  PENYESUAIAN
+}
+
+model User {
+  id           String          @id @default(uuid())
+  name         String
+  email        String          @unique
+  passwordHash String          @map("password_hash")
+  role         Role
+  isActive     Boolean         @default(true) @map("is_active")
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+  transactions Transaction[]
+  movements    StockMovement[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id            String            @id @default(uuid())
+  code          String            @unique
+  name          String
+  categoryId    String            @map("category_id")
+  category      Category          @relation(fields: [categoryId], references: [id])
+  brand         String?
+  purchasePrice Int               @map("purchase_price")
+  sellingPrice  Int               @map("selling_price")
+  stockQuantity Int               @default(0) @map("stock_quantity")
+  minimumStock  Int               @default(0) @map("minimum_stock")
+  unit          String
+  isActive      Boolean           @default(true) @map("is_active")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  movements     StockMovement[]
+  items         TransactionItem[]
+
+  @@index([name])
+  @@index([categoryId])
+  @@index([isActive])
+  @@map("products")
+}
+
+model Transaction {
+  id                String            @id @default(uuid())
+  transactionNumber String            @unique @map("transaction_number")
+  idempotencyKey    String            @unique @map("idempotency_key")
+  userId            String            @map("user_id")
+  user              User              @relation(fields: [userId], references: [id])
+  transactionDate   DateTime          @default(now()) @map("transaction_date")
+  subtotal          Int
+  discount          Int               @default(0)
+  totalAmount       Int               @map("total_amount")
+  paymentMethod     PaymentMethod     @map("payment_method")
+  status            TransactionStatus @default(SELESAI)
+  cancelReason      String?           @map("cancel_reason")
+  cancelledBy       String?           @map("cancelled_by")
+  cancelledAt       DateTime?         @map("cancelled_at")
+  items             TransactionItem[]
+
+  @@index([transactionDate])
+  @@index([status])
+  @@index([userId])
+  @@map("transactions")
+}
+
+model TransactionItem {
+  id            String      @id @default(uuid())
+  transactionId String      @map("transaction_id")
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  productId     String      @map("product_id")
+  product       Product     @relation(fields: [productId], references: [id])
+  itemName      String      @map("item_name")
+  quantity      Int
+  unitPrice     Int         @map("unit_price")
+  subtotal      Int
+
+  @@index([transactionId])
+  @@index([productId])
+  @@map("transaction_items")
+}
+
+model StockMovement {
+  id             String       @id @default(uuid())
+  productId      String       @map("product_id")
+  product        Product      @relation(fields: [productId], references: [id])
+  userId         String       @map("user_id")
+  user           User         @relation(fields: [userId], references: [id])
+  movementType   MovementType @map("movement_type")
+  quantityChange Int          @map("quantity_change")
+  stockAfter     Int          @map("stock_after")
+  unitCost       Int?         @map("unit_cost")
+  referenceId    String?      @map("reference_id")
+  notes          String?
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  @@index([productId, createdAt])
+  @@index([referenceId])
+  @@map("stock_movements")
+}

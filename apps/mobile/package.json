@@ -1,0 +1,28 @@
+{
+  "name": "@bengkelku/mobile",
+  "version": "1.0.0",
+  "private": true,
+  "main": "expo/AppEntry.js",
+  "scripts": {
+    "dev": "expo start",
+    "android": "expo start --android",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .expo dist"
+  },
+  "dependencies": {
+    "@bengkelku/shared": "*",
+    "@tanstack/react-query": "^5.66.0",
+    "expo": "~52.0.0",
+    "expo-secure-store": "~14.0.0",
+    "expo-status-bar": "~2.0.0",
+    "react": "18.3.1",
+    "react-native": "0.76.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@bengkelku/typescript-config": "*",
+    "@types/react": "~18.3.12",
+    "typescript": "^5.8.2"
+  }
+}
+

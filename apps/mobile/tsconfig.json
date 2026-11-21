@@ -1,0 +1,6 @@
+{
+  "extends": "@bengkelku/typescript-config/react-native.json",
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
+

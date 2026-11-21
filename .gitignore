@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Turborepo
+.turbo/
+
+# Build outputs
+dist/
+build/
+.expo/
+web-build/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Testing
+coverage/
+
+# Native / Expo
+*.jks
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+android/
+ios/
+
+# Internal Docs (PRD, SRS, Progress)
+PRD_*.md
+SRS*.md
+progress*.md
+PRD_BengkelKu_v1.0.md
+SRS Backend BengkelKu v1.0.md
+progress backend.md
+
